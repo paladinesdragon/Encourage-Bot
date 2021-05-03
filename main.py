@@ -17,6 +17,7 @@ default_encouragements = [
   "This feeling won't last forever."
 ]
 
+#get quotes from zenquotes api
 def get_quote():
   response = requests.get('https://zenquotes.io/api/random')
   json_data = json.loads(response.text)
@@ -26,6 +27,7 @@ def get_quote():
   #print(json_data)
   return quote + author
 
+#get gifs from tenor api
 def get_gif():
   response = requests.get("https://api.tenor.com/v1/random?q=%s&key=%s&limit=%s&contentfilter=%s" % ("hug", Tenor, 2, "off"))
   if response.status_code == 200:
@@ -34,12 +36,14 @@ def get_gif():
     #gif = json.dumps(gif, sort_keys=True, indent=4)
     return(gif)
 
+#get humorous trump quotes from api
 def get_trump():
   response = requests.get("https://api.whatdoestrumpthink.com/api/v1/quotes/random")
   json_data = json.loads(response.text)
   trump = json_data["message"]
   return trump
 
+#add your own encouragements to database
 def add_encouragement(msg):
   if "encouragements" in db.keys():
     encouragements = db["encouragements"]
@@ -48,6 +52,7 @@ def add_encouragement(msg):
   else:
     db["encouragements"] = [msg]
 
+#delete encouragements from database
 def delete_encouragement(index):
   encouragements = db["encouragements"]
   if len(encouragements) > index:
@@ -78,7 +83,8 @@ async def on_ready():
     options = default_encouragements
     if "encouragements" in db.keys():
       options = options + db["encouragements"]
-
+    
+    #adds options to user and commands to access
     if any(word in message.content for word in sad_words):
       await message.channel.send(random.choice(options) + "\ntext '!hug' if you'd like a hug. \ntext '!trump' for something maybe funny")
 
